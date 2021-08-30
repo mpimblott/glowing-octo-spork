@@ -1,11 +1,46 @@
 {%  extends 'bare_base.html' %}
 
+{%  block header %}
+<style>
+dl#menu dt {
+  display:inline;
+}
+</style>
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <div class="text-center mt-5">
             <h1>Civ V Lekmod Randomiser</h1>
         </div>
     <br/>
-    {{ no_players }} {{ civ_selection }} {{ civ_result }}
+    <p id="display"></p>
+    <br/>
+    <p id="test"></p>
+    <script>
+        result = {{ civ_result | tojson}};
+        no_players = {{ no_players | tojson}};
+        no_choices = {{ no_choices | tojson}};
+        count = 0;
+        player_count = 1;
+
+        let text = "<dl>";
+        result.forEach(getciv);
+        text += "</dl>";
+        document.getElementById("display").innerHTML = text;
+
+        function getciv(value) {
+            if (count % no_choices == 0) {
+                text += "<dt>" + "Player " + player_count + "'s Choices:" + "</dt>";
+                text += "<dd>" + value + "</dd>";
+                player_count += 1;
+            }
+            else {
+                text += "<dd>" + value + "</dd>";
+            }
+            count += 1;
+        }
+    </script>
+
     </div>
 {% endblock %}

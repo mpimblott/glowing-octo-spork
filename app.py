@@ -44,7 +44,8 @@ def civ():
             for i in selection:
                 result.append(civ_data[i])
 
-        return render_template('civ.html', no_players=no_players, civ_selection=civ_selection, civ_result=result)
+        return render_template('civ_result.html', no_players=no_players, no_choices=no_choices,
+                               civ_selection=civ_selection, civ_result=result)
     else:
         return render_template('civ.html')
 
