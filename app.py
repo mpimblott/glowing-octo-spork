@@ -12,6 +12,11 @@ def home():
     return render_template('under_construction.html')
 
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
 @app.route('/civ', methods=['GET', 'POST'])
 def civ():
     if request.method == 'POST':
