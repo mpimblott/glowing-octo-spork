@@ -17,6 +17,11 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/game_of_life')
+def game_of_life():
+    return render_template('game_of_life.html')
+
+
 @app.route('/civ', methods=['GET', 'POST'])
 def civ():
     if request.method == 'POST':
