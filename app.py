@@ -17,6 +17,11 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/MA10207W1')
+def MA10207W1():
+    return render_template('MA10207W1.html')
+
+
 @app.route('/game_of_life')
 def game_of_life():
     return render_template('game_of_life.html')

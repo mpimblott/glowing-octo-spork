@@ -2,15 +2,57 @@
 {% block header %}
 <style>
     * { padding: 0; margin: 0; }
-    canvas { background: #eee; display: block; margin: 3em auto; }
+    canvas { background: #eee; display: block; margin: 2em auto; }
+    .btnContainer{
+        float:left;
+    }
 </style>
 {% endblock %}
 {% block content %}
-<canvas id="myCanvas" width="800" height="800"></canvas>
-<button type="button" class="btn" id="button">Basic</button>
+<div class="text-center mt-5">
+    <h1>Conway's Game of Life</h1>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <canvas id="myCanvas" width="640" height="640"></canvas>
+            <br/>
+            <br/>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Search widget-->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="text-center">
+                        <button type="button" class="btn btn-success" id="play_button">play</button>
+                        <button type="button" class="btn btn-danger" id="reset_button">reset</button>
+                    </div>
+                </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            Javascript game of life simulation. Click on the canvas to place live cells and press play to begin the simulation.
+                            <br/>
+                            <ol>
+                                <li>Any live cell with fewer than two live neighbours dies, as if by underpopulation</li>
+                                <li>Any live cell with two or three live neighbours lives on to the next generation.</li>
+                                <li>Any live cell with more than three live neighbours dies, as if by overpopulation.</li>
+                                <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
+                            </ol>
+                            <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Wikipedia</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 	var canvas = document.getElementById("myCanvas");
+    const play_btn = document.getElementById("play_button");
+    const reset_btn = document.getElementById("reset_button");
     var canvasLeft = canvas.offsetLeft + canvas.clientLeft;
     var canvasTop = canvas.offsetTop + canvas.clientTop;
     var context = canvas.getContext("2d");
@@ -20,7 +62,7 @@
 
     console.log("starting");
     var tick = 0;
-    var play = true;
+    var play = false;
 
     function zeros(dimensions) {
         var array = [];
@@ -49,13 +91,22 @@
         }
     }, false);
 
-    document.getElementById('button').onclick = function() {
+    play_btn.onclick = function() {
         if (play == true) {
             play = false;
+            play_btn.className= "btn btn-success";
+            play_btn.innerHTML = "play";
         }
         else {
             play = true;
+            play_btn.className= "btn btn-warning";
+            play_btn.innerHTML = "pause";
         }
+    }
+
+    reset_btn.onclick = function() {
+        tile_grid = zeros([grid_dimension,grid_dimension]);
+        neighbour_grid = zeros([grid_dimension,grid_dimension]);
     }
 
     function draw_square(x,y, colour){
@@ -128,10 +179,6 @@
         for (var x = 0; x < grid_dimension; x++) {
             for (var y = 0; y < grid_dimension; y++) {
                 var neighbours = neighbour_grid[x][y];
-                //context.fillStyle = "#000000";
-                //context.textAlign = "center";
-                //context.fillText(String(neighbours), x*20 + 10, y*20 +10);
-                // what state is the selected cell in
                 if (tile_grid[x][y] == 1) {
                     if (neighbours < 2 || neighbours > 3) {
                         next_grid[x][y] = 0;
@@ -152,7 +199,7 @@
         canvasLeft = canvas.offsetLeft + canvas.clientLeft;
         canvasTop = canvas.offsetTop + canvas.clientTop;
         draw();
-        if (tick % 100 == 0 && play == true) {
+        if (tick % 50 == 0 && play == true) {
             console.log("tick")
             tile_grid = evolve();
         }
