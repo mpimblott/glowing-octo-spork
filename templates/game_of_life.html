@@ -48,6 +48,15 @@
         }
     }, false);
 
+    document.getElementById('button').onclick = function() {
+        if (play == true) {
+            play = false;
+        }
+        else {
+            play = true;
+        }
+    }
+
     function draw_square(x,y, colour){
         context.beginPath();
         context.rect(x, y, square_size, square_size);
@@ -141,14 +150,6 @@
         if (tick % 1 == 0 && play == true) {
             console.log("tick")
             grid = evolve();
-        }
-        document.getElementById('button').onclick = function() {
-            if (play == true) {
-                play = false;
-            }
-            else {
-                play = true;
-            }
         }
         tick++;
     }
