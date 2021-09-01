@@ -32,7 +32,8 @@
         return array;
     }
 
-    grid = zeros([grid_dimension,grid_dimension]);
+    var tile_grid = zeros([grid_dimension,grid_dimension]);
+    var neighbour_grid = zeros([grid_dimension,grid_dimension]);
 
     canvas.addEventListener('click', function(event) {
 	    var x = event.pageX - canvasLeft;
@@ -40,11 +41,11 @@
         var grid_x = Math.floor(x/square_size);
         var grid_y = Math.floor(y/square_size);
         console.log("click " + grid_x + " " + grid_y);
-        if (grid[grid_x][grid_y] == 0){
-            grid[grid_x][grid_y] = 1;
+        if (tile_grid[grid_x][grid_y] == 0){
+            tile_grid[grid_x][grid_y] = 1;
         }
         else {
-            grid[grid_x][grid_y] = 0;
+            tile_grid[grid_x][grid_y] = 0;
         }
     }, false);
 
@@ -69,7 +70,7 @@
         context.clearRect(0, 0, canvas.width, canvas.height);
         for (var x = 0; x < grid_dimension; x++) {
             for (var y = 0; y < grid_dimension; y++) {
-                if (grid[x][y] == 1) {
+                if (tile_grid[x][y] == 1) {
                     draw_square(x*square_size,y*square_size, "#FF8000")
                 }
                 else {
@@ -93,41 +94,45 @@
     }
 
     function evolve() {
-        var next_grid = grid;
-        // find the number of neighbours
+        neighbour_grid = zeros([grid_dimension,grid_dimension]);
+        var next_grid = tile_grid;
+        // fill out the neighbour grid
         for (var x = 0; x < grid_dimension; x++) {
             for (var y = 0; y < grid_dimension; y++) {
-                var neighbours = 0;
-                // check above
-                if (grid[x][wrap(y-1)] == 1) {
-                    neighbours++;
-                    console.log("neighbour above at " + x + " " + y);
-                }
-                // check below
-                if (grid[x][wrap(y+1)] == 1) {
-                    neighbours++;
-                    console.log("neighbour below at " + x + " " + y);
-                }
-                // check left
-                if (grid[wrap(x-1)][y] == 1) {
-                    neighbours++;
-                    console.log("neighbour left at " + x + " " + y);
-                }
-                // check right
-                if (grid[wrap(x+1)][y] == 1) {
-                    neighbours++;
-                    console.log("neighbour right at " + x + " " + y);
-                }
-                context.fillStyle = "#000000";
-                context.textAlign = "center";
-                context.fillText(String(neighbours), x*20 + 10, y*20 +10);
                 // what state is the selected cell in
-                if (grid[x][y] == 1) {
+                if (tile_grid[x][y] == 1) {
                     // if the cell is alive
                     console.log("left x : " + wrap(x-1) + " y: " + y);
                     console.log("above x : " + x + " y: " + wrap(y-1));
                     console.log("right x : " + wrap(x+1) + " y: " + y);
                     console.log("below x : " + x + " y: " + wrap(y+1));
+                    //left
+                    neighbour_grid[wrap(x-1)][y]++;
+                    //up
+                    neighbour_grid[x][wrap(y-1)]++;
+                    //right
+                    neighbour_grid[wrap(x+1)][y]++;
+                    //down
+                    neighbour_grid[x][wrap(y+1)]++;
+                    //left up
+                    neighbour_grid[wrap(x-1)][wrap(y-1)]++;
+                    //left down
+                    neighbour_grid[wrap(x-1)][wrap(y+1)]++;
+                    //right up
+                    neighbour_grid[wrap(x+1)][wrap(y-1)]++;
+                    //right down
+                    neighbour_grid[wrap(x+1)][wrap(y+1)]++;
+                }
+            }
+        }
+        for (var x = 0; x < grid_dimension; x++) {
+            for (var y = 0; y < grid_dimension; y++) {
+                var neighbours = neighbour_grid[x][y];
+                //context.fillStyle = "#000000";
+                //context.textAlign = "center";
+                //context.fillText(String(neighbours), x*20 + 10, y*20 +10);
+                // what state is the selected cell in
+                if (tile_grid[x][y] == 1) {
                     if (neighbours < 2 || neighbours > 3) {
                         next_grid[x][y] = 0;
                     }
@@ -147,12 +152,12 @@
         canvasLeft = canvas.offsetLeft + canvas.clientLeft;
         canvasTop = canvas.offsetTop + canvas.clientTop;
         draw();
-        if (tick % 1 == 0 && play == true) {
+        if (tick % 100 == 0 && play == true) {
             console.log("tick")
-            grid = evolve();
+            tile_grid = evolve();
         }
         tick++;
     }
-    setInterval(update, 1000);
+    setInterval(update, 10);
 </script>
 {% endblock %}
