@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return render_template('under_construction.html')
+    return render_template('bare_base.html')
 
 
 @app.route('/about')
@@ -20,6 +20,11 @@ def about():
 @app.route('/MA10207W1')
 def MA10207W1():
     return render_template('MA10207W1.html')
+
+
+@app.route('/chess')
+def chess():
+    return render_template('chess.html')
 
 
 @app.route('/game_of_life')

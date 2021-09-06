@@ -1,0 +1,193 @@
+{%  extends 'bare_base.html' %}
+{% block header %}
+<style>
+    * { padding: 0; margin: 0; }
+    canvas { background: #eee; display: block; margin: 2em auto; }
+    .btnContainer{
+        float:left;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="text-center mt-5">
+    <h1>Chess</h1>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <canvas id="myCanvas" width="640" height="640"></canvas>
+            <br/>
+            <br/>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Search widget-->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="text-center">
+                        <button type="button" class="btn btn-success" id="play_button">play</button>
+                        <button type="button" class="btn btn-danger" id="reset_button">reset</button>
+                    </div>
+                </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            Chess
+                            <br/>
+                            its just chess
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+	var canvas = document.getElementById("myCanvas");
+    const play_btn = document.getElementById("play_button");
+    const reset_btn = document.getElementById("reset_button");
+    var canvasLeft = canvas.offsetLeft + canvas.clientLeft;
+    var canvasTop = canvas.offsetTop + canvas.clientTop;
+    var context = canvas.getContext("2d");
+    context.font = "10px Arial";
+    var grid_dimension = 8;
+    var square_size = canvas.width / grid_dimension;
+    console.log("starting");
+    var play = false;
+
+    pieces = {
+        0 : "",
+        1 : "WPawn",
+        2 : "WCastle",
+        3 : "WKnight",
+        4 : "WBishop",
+        5 : "WQueen",
+        6 : "WKing",
+        11 : "BPawn",
+        12 : "BCastle",
+        13 : "BKnight",
+        14 : "BBishop",
+        15 : "BQueen",
+        16 : "BKing"
+    }
+
+    function zeros(dimensions) {
+        var array = [];
+
+        for (var i = 0; i < dimensions[0]; ++i) {
+            array.push(dimensions.length == 1 ? 0 : zeros(dimensions.slice(1)));
+        }
+
+        return array;
+    }
+
+    function init_board(grid) {
+        for (var i = 0; i < grid_dimension; ++i) {
+            for (var j = 0; j < grid_dimension; ++j) {
+                if ((i % 2 == 0 && j % 2 == 0) || (j % 2 != 0 && i % 2 != 0)) {
+                    grid[i][j] = 1;
+                }
+            }
+        }
+        return grid
+    }
+
+    function place_pieces(grid) {
+        // pawns
+        for (var i = 0; i < grid_dimension; ++i) {
+            grid[i][1] = 11;
+            grid[i][6] = 1;
+            if (i == 0 || i == 7) {
+                grid[i][0] = 12;
+                grid[i][7] = 2;
+            }
+            else if (i == 1 || i == 6) {
+                grid[i][0] = 13;
+                grid[i][7] = 3;
+            }
+            else if (i == 2 || i == 5) {
+                grid[i][0] = 14;
+                grid[i][7] = 4;
+            }
+        }
+        grid[3][0] = 15;
+        grid[4][0] = 16;
+        grid[3][7] = 5;
+        grid[4][7] = 6;
+        return grid
+    }
+
+    var tile_grid = zeros([grid_dimension,grid_dimension]);
+    tile_grid = init_board(tile_grid);
+    var piece_grid = zeros([grid_dimension,grid_dimension]);
+    piece_grid = place_pieces(piece_grid);
+
+    canvas.addEventListener('click', function(event) {
+	    var x = event.pageX - canvasLeft;
+        var y = event.pageY - canvasTop;
+        var grid_x = Math.floor(x/square_size);
+        var grid_y = Math.floor(y/square_size);
+        console.log("click " + grid_x + " " + grid_y);
+        // tile clicking logic
+    }, false);
+
+    play_btn.onclick = function() {
+        if (play == true) {
+            play = false;
+            play_btn.className= "btn btn-success";
+            play_btn.innerHTML = "play";
+        }
+        else {
+            play = true;
+            play_btn.className= "btn btn-warning";
+            play_btn.innerHTML = "pause";
+        }
+    }
+
+    reset_btn.onclick = function() {
+        tile_grid = zeros([grid_dimension,grid_dimension]);
+        piece_grid = zeros([grid_dimension,grid_dimension]);
+    }
+
+    function draw_square(x,y, colour){
+        context.beginPath();
+        context.rect(x, y, square_size, square_size);
+        context.fillStyle = colour;
+        context.fill();
+        context.closePath();
+    }
+
+    function draw_piece(x,y, colour, piece){
+        context.beginPath();
+        context.fillStyle = colour;
+        context.fillText(pieces[piece], x, y);
+        context.fill();
+        context.closePath();
+    }
+
+    function draw() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        for (var x = 0; x < grid_dimension; x++) {
+            for (var y = 0; y < grid_dimension; y++) {
+                var canvas_x = x*square_size;
+                var canvas_y = y*square_size;
+                if (tile_grid[x][y] == 1) {
+                    draw_square(canvas_x,canvas_y, "#eee")
+                }
+                else {
+                    draw_square(canvas_x,canvas_y, "#000000")
+                }
+                draw_piece(canvas_x,canvas_y, "FF8000", piece_grid[x][y])
+            }
+        }
+    }
+
+    function update() {
+        canvasLeft = canvas.offsetLeft + canvas.clientLeft;
+        canvasTop = canvas.offsetTop + canvas.clientTop;
+        draw();
+    }
+    setInterval(update, 10);
+</script>
+{% endblock %}
