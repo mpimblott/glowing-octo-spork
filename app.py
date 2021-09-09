@@ -12,6 +12,11 @@ def home():
     return render_template('bare_base.html')
 
 
+@app.route('/year1')
+def year1():
+    return render_template('shop_base.html')
+
+
 @app.route('/about')
 def about():
     return render_template('about.html')
