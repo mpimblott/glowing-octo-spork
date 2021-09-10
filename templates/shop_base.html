@@ -85,45 +85,68 @@
     </div>
 </header>
 <!-- Section-->
-<section class="py-5">
+
+
+<!--modal script-->
+<script>
+var body = document.getElementsByTagName('body')[0]
+
+function Page(title, tags, src) {
+    this.title = title;
+    this.tags = tags;
+    this.src = src;
+    this.modal = function () {
+        var newModal = document.createElement('div');   //create a div
+        newModal.id = this.title + 'Modal';             //add an id
+        newModal.className = 'modal';
+        body.appendChild(newModal);                 //append to the doc.body
+        document.getElementById(newModal.id).innerHTML = `
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close">&times;</span>
+        <!-- Header of Modal Inserted Here -->
+      <h2>` + this.title + `</h2>
+    </div>
+    <div class="modal-body">
+        <!-- Body of Modal Inserted Here -->
+        <iframe src=` + this.src + ` style="width: 100%;height: 900px;border: none;"></iframe>
+    </div>
+    <div class="modal-footer">
+      <h3>Modal Footer</h3>
+    </div>
+  </div>`;
+        return newModal;
+    }
+    this.card = function() {
+        var newCard = document.createElement('div');   //create a div
+        newCard.id = this.title + 'Card';             //add an id
+        newCard.className = 'modal';
+        body.appendChild(newCard);                 //append to the doc.body
+        document.getElementById(newCard.id).innerHTML = `
+    <section class="py-5">
     <div class="container px-4 px-lg-5 mt-5">
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <div class="col mb-5">
                 <div class="card h-100">
                     <!--image-->
-                    <input type="image" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" name="saveForm" class="card-img-top" id="myBtn" alt="..." />
                     <div class="card-body p-4">
                         <div class="text-center">
                             <!--name-->
-                            <h5 class="fw-bolder">Document</h5>
+                            <h5 class="fw-bolder" id="myBtn">` + this.title + `</h5>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
-
-<!-- The Modal -->
-<div id="myModal" class="modal">
-  <!-- Modal content -->
-  <div class="modal-content">
-    <div class="modal-header">
-      <span class="close">&times;</span>
-      <h2>Modal Header</h2>
-    </div>
-    <div class="modal-body">
-        <iframe src="/static/lecture_notes/MA10207 Week 1.pdf" style="width: 100%;height: 900px;border: none;"></iframe>
-    </div>
-    <div class="modal-footer">
-      <h3>Modal Footer</h3>
-    </div>
-  </div>
-</div>
-<!--modal script-->
-<script>
+</section>`;
+        return newCard;
+    }
+}
+const week1 = new Page("Week 1", "None", "/static/lecture_notes/MA10207 Week 1.pdf");
 // Get the modal
-var modal = document.getElementById("myModal");
+{#var modal = document.getElementById(week1.modal.id);
 // Get the button that opens the modal
 var btn = document.getElementById("myBtn");
 // Get the <span> element that closes the modal
@@ -144,6 +167,6 @@ window.onclick = function(event) {
   if (event.target == modal) {
     modal.style.display = "none";
   }
-}
+}#}
 </script>
 {% endblock %}
