@@ -9,17 +9,22 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return render_template('bare_base.html')
+    return render_template('game_of_life.html')
 
 
 @app.route('/year1')
 def year1():
-    return render_template('shop_base.html')
+    return render_template('under_construction.html')
+
+
+@app.route('/ai_author')
+def ai_author():
+    return render_template('under_construction.html')
 
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    return render_template('under_construction.html')
 
 
 @app.route('/MA10207W1')
